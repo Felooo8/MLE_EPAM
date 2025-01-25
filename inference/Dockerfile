@@ -12,7 +12,7 @@ WORKDIR /app
 COPY data/ /app/data
 
 # Copy models folder to Docker
-COPY models/${model_name} /app/models/${model_name}.pickle
+COPY models/${model_name}.pickle /app/models/${model_name}.pickle
 
 # Copy the code itself
 COPY inference /app/inference

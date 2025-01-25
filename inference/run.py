@@ -19,6 +19,7 @@ sys.path.append(os.path.dirname(ROOT_DIR))
 
 # Configuration file path
 CONF_FILE = os.getenv('CONF_PATH', os.path.join(ROOT_DIR, "settings.json"))
+CONF_FILE = "settings.json"
 
 # Load configuration settings
 with open(CONF_FILE, "r") as file:
@@ -41,16 +42,24 @@ parser.add_argument("--out_path",
 def get_latest_model_path() -> str:
     """Gets the path of the latest saved model."""
     latest = None
+    latest_time = None
     for dirpath, dirnames, filenames in os.walk(MODEL_DIR):
         for filename in filenames:
             if filename.endswith(".pickle"):
-                current_time = datetime.strptime(filename.split('.')[0], conf['general']['datetime_format'])
-                if not latest or datetime.strptime(latest, conf['general']['datetime_format']) < current_time:
-                    latest = filename.split('.')[0]
-    if latest is None:
-        raise FileNotFoundError("No model file found in the model directory.")
-    return os.path.join(MODEL_DIR, f"{latest}.pickle")
-
+                try:
+                    # Extract the base filename without extension
+                    base_filename, _ = os.path.splitext(filename)
+                    # Parse the datetime from the base filename
+                    current_time = datetime.strptime(base_filename, conf['general']['datetime_format'])
+                    if not latest_time or current_time > latest_time:
+                        latest = filename
+                        latest_time = current_time
+                except ValueError as e:
+                    logging.warning(f"Skipping file {filename} due to parsing error: {e}")
+    if latest:
+        return os.path.join(MODEL_DIR, latest)
+    else:
+        raise FileNotFoundError("No valid model file found in the model directory.")
 
 def load_model(path: str) -> RandomForestClassifier:
     """Loads and returns the trained model."""
