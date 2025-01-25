@@ -4,6 +4,7 @@ This repository contains a Data Science project designed as a part of Module 8: 
 
 # Project Structure
 
+```
 Iris_DS_Project
 ├── data # Training and inference data
 │ ├── iris_train.csv # Training dataset
@@ -22,6 +23,7 @@ Iris_DS_Project
 ├── settings.json # Configuration file
 ├── requirements.txt # Dependencies
 └── README.md # Project documentation
+```
 
 ## Settings:
 
